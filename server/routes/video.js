@@ -65,7 +65,7 @@ router.post("/thumbnail", (req, res) => {
         return res.json({ success: false, err});
     })
     .screenshots({ 
-        count: 1,//옵션 : 카운트가 3개면 썸네일을 3개 생성하는거임 
+        count: 3,//옵션 : 카운트가 3개면 썸네일을 3개 생성하는거임 
         folder: 'uploads/thumbnails',//썸네일이 저장되는 위치
         size: '320x240',//썸네일 사이즈
         filename: 'thumbnail-%b.png'//원래이름

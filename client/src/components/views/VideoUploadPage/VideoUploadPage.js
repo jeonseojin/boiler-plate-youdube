@@ -4,6 +4,7 @@ import {Typography, Button, Form, message, Input, Icon} from 'antd';
 import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import { useSelector }  from 'react-redux';
+import { duration } from 'moment';
 
 const {TextArea} = Input;
 const {Title} = Typography;
@@ -65,9 +66,8 @@ function VideoUploadPage(props) {
                     .then(response => {
                         if (response.data.success) {
 
-                            setDuration(response.data.FileDuration);
+                            setDuration(response.data.fileDuration);
                             setThumbnailPath(response.data.url);
-
                         }else {
                             alert('썸네일 생성에 실패 했습니다.');
                         }
