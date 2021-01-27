@@ -16,7 +16,6 @@ let storage = multer.diskStorage({
     fileFilter: (req, file, cb) => {
         const ext = path.extname(file.originalname);
         if (ext !== '.mp4') {
-            console.log(res);
             return cb(res.status(400).end('only mp4 is allowed'), false);
 
         }
@@ -39,6 +38,41 @@ router.post("/uploadfiles", (req, res) => {
         return res.json({ success: true, url: res.req.file.path, fileName: res.req.file.fileName })
     })
 })
+
+
+router.post("/thumbnail", (req, res) => {
+    
+    // 썸네일 생성하고 비디오 러닝타임 가져오기
+    let filePath = "";
+    let fileDuration = "";
+
+    // 비디오 정보 가져오기
+    ffmpeg.ffprobe(req.body.url, function (err, metadata) {
+        fileDuration = metadata.format.duration
+    });
+
+    // 썸네일 생성
+    ffmpeg(req.body.url)
+    .on('filenames', function (filenames) {//파일이름 생성
+
+        filePath = 'uploads/thumbnails/' + filenames[0];
+    })
+    .on('end', function (){//생성된 썸네일로 뭘 할지
+        console.log(fileDuration)
+        return res.json({ success: true, url: filePath, fileDuration: fileDuration});
+    })  
+    .on('error', function (err) {
+        return res.json({ success: false, err});
+    })
+    .screenshots({ 
+        count: 1,//옵션 : 카운트가 3개면 썸네일을 3개 생성하는거임 
+        folder: 'uploads/thumbnails',//썸네일이 저장되는 위치
+        size: '320x240',//썸네일 사이즈
+        filename: 'thumbnail-%b.png'//원래이름
+    })
+
+})
+
 
 router.post("/uploadVideo", (req, res) => {
     
@@ -65,46 +99,6 @@ router.get("/getVideos", (req, res) => {
     
 })
 
-
-router.post("/thumbnail", (req, res) => {
-    
-    // 썸네일 생성하고 비디오 러닝타임 가져오기
-    console.log(req);
-    let filePath = "";
-    let fileDuration = "";
-
-    // 비디오 정보 가져오기
-    ffmpeg.ffprobe(req.body.url, function (err, metadata) {
-        console.log(metadata);
-        console.log(metadata.format.duration);
-        fileDuration = metadata.format.duration
-    });
-
-    // 썸네일 생성
-    ffmpeg(req.body.url)
-    .on('filenames', function (filenames) {//파일이름 생성
-        console.log('Will generate' + filenames.join(', '));
-        console.log(filenames);
-
-        filePath = 'uploads/thumbnails/' + filenames[0];
-        
-    })
-    .on('end', function (){//생성된 썸네일로 뭘 할지
-        console.log('Screenshots taken');
-        return res.json({ success: true, url: filePath, fileDuration: fileDuration});
-    })  
-    .on('error', function (err) {
-        console.error(err);
-        return res.json({ success: false, err});
-    })
-    .screenshots({ 
-        count: 3,//옵션 : 카운트가 3개면 썸네일을 3개 생성하는거임 
-        folder: 'uploads/thumbnails',//썸네일이 저장되는 위치
-        size: '320x240',//썸네일 사이즈
-        filename: 'thumbnail-%b.png'//원래이름
-    })
-
-})
 
 
 module.exports = router;
