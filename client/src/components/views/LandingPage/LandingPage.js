@@ -5,16 +5,14 @@ import Axios from 'axios';
 const moment = require("moment");
 const { Title } = Typography;
 const { Meta } = Card;
-
 function LandingPage() {
 
     const [Video, setVideo] = useState([])
 
     useEffect(() => {
         Axios.get('/api/video/getVideos')
-        .then(response =>{
+        .then(response => {
             if(response.data.success) {
-                console.log(response.data)
                 setVideo(response.data.videos);
             } else {
                 alert('비디오 가져오기를 실패 했습니다.')
@@ -29,7 +27,7 @@ function LandingPage() {
         var seconds = Math.floor((video.duration - minutes *60));
         
             return <Col lg={6} md={8} xs={24}>
-                <a href={`/video/post/${video._id}` }>
+                <a href={`/video/${video._id}` }>
                 
                     <div style={{ position: 'relative' }}>
                         <img style={{width: '100%'}} src={`http://localhost:5000/${video.thumbnail}`} alet="thumbnail" />
@@ -58,10 +56,7 @@ function LandingPage() {
             <Title level={2} > Recommended </Title>
             <hr />
             <Row gutter={[32, 16]}>
-            {renderCards}
-                
-
-
+                {renderCards}
             </Row>
 
         </div>

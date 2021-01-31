@@ -31,6 +31,7 @@
     "node-pre-gyp": "^0.17.0",
     "prop-types": "^15.7.2",
     "react-redux": "^5.1.2",
+    "react-warning": "^2.0.0",
     "saslprep": "^1.0.3",
     "supports-color": "^7.2.0"
   },
