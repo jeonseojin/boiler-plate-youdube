@@ -1,18 +1,53 @@
 import React, {useEffect, useState} from 'react';
 import Axios from 'axios';
 
+
 function Subscribe(props) {
 
-    const [SubscibeNumber, setSubscibeNumber] = useState(0)
+    const [SubscribeNumber, setSubscribeNumber] = useState(0)
     const [Subscribed, setSubscribed] = useState(false)
 
+ 
+
+    const onSubscribe = () => {
+
+        let subscribedVarlable = {
+            userTo: props.userTo,
+            userFrom: props.userFrom
+        }
+
+        //이미 구독 중
+        if (Subscribed) {
+            Axios.post('/api/subscribe/unSubscribe', subscribedVarlable)
+            .then(response => {
+                if (response.data.success) {
+                    setSubscribeNumber(SubscribeNumber - 1)
+                    setSubscribed(!Subscribed)
+                } else {
+                    alert( '구독 취소 하는데 실패 했습니다.')
+                }
+            }) 
+        // 아직 구독 전
+        } else {
+            Axios.post('/api/subscribe/Subscribe', subscribedVarlable)
+            .then(response => {
+                if (response.data.success) {
+                    setSubscribeNumber(SubscribeNumber + 1)
+                    setSubscribed(!Subscribed)
+                } else {
+                    alert( '구독 하는데 실패 했습니다.')
+                }
+            }) 
+
+        }
+    }
     useEffect(() => {
         let variable = {userTo: props.userTo}
 
-        Axios.post('/api/suvscribe/subscribeNumber', variable)
+        Axios.post('/api/subscribe/subscribeNumber', variable)
             .then( response => {
                 if (response.data.success) {
-                    setSubscibeNumber(response.data.SubscibeNumber)
+                    setSubscribeNumber(response.data.subscribeNumber)
                 } else {
                     alert( '구독자 수 정보를 받아오지 못했습니다.');
                 }
@@ -23,13 +58,12 @@ function Subscribe(props) {
         Axios.post('/api/subscribe/subscribed', SubscribedVariable )
         .then(response => {
             if (response.data.success) {
-                setSubscribed(response.data.Subscribed)
+                // setSubscribed(response.data.Subscribed)
             } else {
                 alert( '정보를 받아오지 못했습니다.' );
             }
         })
     }, [])
-
     return (
         <div>
             <button
@@ -37,9 +71,9 @@ function Subscribe(props) {
                 color: 'white', padding: '10px 16px', border: 'none',
                 fontWeight: '500', fontSize: '1rem', textTransform: 'uppercase'
             }}
-                onClick
+                onClick={onSubscribe}
             >
-               {SubscibeNumber} {Subscribed ? 'Subscribed' : 'Subscribe'}
+               {SubscribeNumber} {Subscribed ? 'Subscribed' : 'Subscribe'}
             </button>
         </div>
     )
