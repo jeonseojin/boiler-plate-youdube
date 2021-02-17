@@ -1,7 +1,8 @@
 import Axios from 'axios';
 import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
-import SingleComment from './SingleComment'
+import SingleComment from './SingleComment';
+import ReplyComment from './ReplyComment';
 import { Button, Input } from 'antd';
 const { TextArea } = Input;
 
@@ -20,9 +21,8 @@ function Comment(props) {
         const variables = {
             content: commentValue,
             writer: user.userData._id,
-            postId: videoId
+            postId: props.postId
         }
-        console.log(variables)
         Axios.post('/api/comment/saveComment', variables)
         .then(response => {
             if (response.data.success) {
@@ -42,7 +42,10 @@ function Comment(props) {
             {/* Comment lists */}
             {props.commentLists && props.commentLists.map((comment, index) =>(
                 (!comment.responseTo &&
-                    <SingleComment refreshFunction={props.refreshFunction} comment={comment} postId={videoId} />
+                    <React.Fragment>
+                        <SingleComment refreshFunction={props.refreshFunction} comment={comment} postId={videoId} />
+                        <ReplyComment refreshFunction={props.refreshFunction} parentCommentId={comment._id} commentLists={props.commentLists} postId={videoId}/>
+                    </React.Fragment>
                 )
         ))}
 
